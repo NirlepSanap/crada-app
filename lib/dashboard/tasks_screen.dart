@@ -1,4 +1,183 @@
+// task_manager.dart - Create this as a separate file
 import 'package:flutter/material.dart';
+
+class Task {
+  String id;
+  String title;
+  String description;
+  bool completed;
+  String priority;
+  DateTime dueDate;
+  DateTime createdAt;
+
+  Task({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.completed,
+    required this.priority,
+    required this.dueDate,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'completed': completed,
+      'priority': priority,
+      'dueDate': dueDate,
+      'createdAt': createdAt,
+    };
+  }
+
+  factory Task.fromMap(Map<String, dynamic> map) {
+    return Task(
+      id: map['id'],
+      title: map['title'],
+      description: map['description'],
+      completed: map['completed'],
+      priority: map['priority'],
+      dueDate: map['dueDate'],
+      createdAt: map['createdAt'],
+    );
+  }
+}
+
+class TaskManager {
+  static final TaskManager _instance = TaskManager._internal();
+  factory TaskManager() => _instance;
+  TaskManager._internal();
+
+  List<Task> _tasks = [
+    Task(
+      id: '1',
+      title: 'Follow up with client presentation',
+      description: 'Send follow-up email after yesterday\'s presentation',
+      completed: false,
+      priority: 'High',
+      dueDate: DateTime.now().add(const Duration(hours: 2)),
+      createdAt: DateTime.now().subtract(const Duration(days: 1)),
+    ),
+    Task(
+      id: '2',
+      title: 'Review quarterly report',
+      description: 'Complete review of Q3 financial report',
+      completed: false,
+      priority: 'Medium',
+      dueDate: DateTime.now().add(const Duration(days: 1)),
+      createdAt: DateTime.now().subtract(const Duration(hours: 3)),
+    ),
+    Task(
+      id: '3',
+      title: 'Team meeting preparation',
+      description: 'Prepare agenda and materials for Monday team meeting',
+      completed: true,
+      priority: 'Medium',
+      dueDate: DateTime.now().subtract(const Duration(hours: 1)),
+      createdAt: DateTime.now().subtract(const Duration(days: 2)),
+    ),
+  ];
+
+  List<Task> get tasks => _tasks;
+  
+  void addTask(Task task) {
+    _tasks.add(task);
+    _notifyListeners();
+  }
+  
+  void updateTask(Task updatedTask) {
+    final index = _tasks.indexWhere((t) => t.id == updatedTask.id);
+    if (index != -1) {
+      _tasks[index] = updatedTask;
+      _notifyListeners();
+    }
+  }
+  
+  void deleteTask(String id) {
+    _tasks.removeWhere((task) => task.id == id);
+    _notifyListeners();
+  }
+
+  void toggleTaskCompletion(String id) {
+    final index = _tasks.indexWhere((task) => task.id == id);
+    if (index != -1) {
+      _tasks[index].completed = !_tasks[index].completed;
+      _notifyListeners();
+    }
+  }
+
+  void duplicateTask(Task originalTask) {
+    final newTask = Task(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: '${originalTask.title} (Copy)',
+      description: originalTask.description,
+      completed: false,
+      priority: originalTask.priority,
+      dueDate: originalTask.dueDate.add(const Duration(days: 1)),
+      createdAt: DateTime.now(),
+    );
+    _tasks.add(newTask);
+    _notifyListeners();
+  }
+  
+  // Statistics getters
+  int get totalTasks => _tasks.length;
+  int get completedTasks => _tasks.where((task) => task.completed).length;
+  int get pendingTasks => _tasks.where((task) => !task.completed).length;
+  int get overdueTasks => _tasks.where((task) => 
+    DateTime.now().isAfter(task.dueDate) && !task.completed
+  ).length;
+  int get todayTasks => _tasks.where((task) => 
+    task.dueDate.year == DateTime.now().year &&
+    task.dueDate.month == DateTime.now().month &&
+    task.dueDate.day == DateTime.now().day
+  ).length;
+  
+  // Get filtered tasks
+  List<Task> getFilteredTasks(String filter) {
+    switch (filter) {
+      case 'Pending':
+        return _tasks.where((task) => !task.completed).toList();
+      case 'Completed':
+        return _tasks.where((task) => task.completed).toList();
+      case 'Overdue':
+        return _tasks.where((task) => 
+          DateTime.now().isAfter(task.dueDate) && !task.completed
+        ).toList();
+      default:
+        return _tasks;
+    }
+  }
+
+  // Get recent pending tasks for dashboard
+  List<Task> getRecentPendingTasks({int limit = 3}) {
+    return _tasks
+        .where((task) => !task.completed)
+        .take(limit)
+        .toList();
+  }
+
+  // Simple listener pattern for updates
+  final List<VoidCallback> _listeners = [];
+  
+  void addListener(VoidCallback listener) {
+    _listeners.add(listener);
+  }
+  
+  void removeListener(VoidCallback listener) {
+    _listeners.remove(listener);
+  }
+  
+  void _notifyListeners() {
+    for (final listener in _listeners) {
+      listener();
+    }
+  }
+}
+
+// Updated TasksScreen that uses TaskManager
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
@@ -8,10 +187,27 @@ class TasksScreen extends StatefulWidget {
 }
 
 class _TasksScreenState extends State<TasksScreen> {
-  List<Map<String, dynamic>> tasks = [];
-
+  final TaskManager _taskManager = TaskManager();
   String selectedFilter = 'All';
   final List<String> filterOptions = ['All', 'Pending', 'Completed', 'Overdue'];
+
+  @override
+  void initState() {
+    super.initState();
+    _taskManager.addListener(_onTasksUpdated);
+  }
+
+  @override
+  void dispose() {
+    _taskManager.removeListener(_onTasksUpdated);
+    super.dispose();
+  }
+
+  void _onTasksUpdated() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +319,7 @@ class _TasksScreenState extends State<TasksScreen> {
   }
 
   Widget _buildTasksList() {
-    List<Map<String, dynamic>> filteredTasks = _getFilteredTasks();
+    List<Task> filteredTasks = _taskManager.getFilteredTasks(selectedFilter);
     
     if (filteredTasks.isEmpty) {
       return Center(
@@ -162,9 +358,9 @@ class _TasksScreenState extends State<TasksScreen> {
     );
   }
 
-  Widget _buildTaskCard(Map<String, dynamic> task) {
-    Color priorityColor = _getPriorityColor(task['priority']);
-    bool isOverdue = DateTime.now().isAfter(task['dueDate']) && !task['completed'];
+  Widget _buildTaskCard(Task task) {
+    Color priorityColor = _getPriorityColor(task.priority);
+    bool isOverdue = DateTime.now().isAfter(task.dueDate) && !task.completed;
     
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -186,19 +382,19 @@ class _TasksScreenState extends State<TasksScreen> {
                 Row(
                   children: [
                     GestureDetector(
-                      onTap: () => _toggleTaskCompletion(task['id']),
+                      onTap: () => _taskManager.toggleTaskCompletion(task.id),
                       child: Container(
                         width: 24,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: task['completed'] ? Colors.green : Colors.transparent,
+                          color: task.completed ? Colors.green : Colors.transparent,
                           border: Border.all(
-                            color: task['completed'] ? Colors.green : Colors.grey,
+                            color: task.completed ? Colors.green : Colors.grey,
                             width: 2,
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: task['completed']
+                        child: task.completed
                             ? const Icon(Icons.check, color: Colors.white, size: 16)
                             : null,
                       ),
@@ -206,12 +402,12 @@ class _TasksScreenState extends State<TasksScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        task['title'],
+                        task.title,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: task['completed'] ? Colors.grey[500] : Colors.black87,
-                          decoration: task['completed'] 
+                          color: task.completed ? Colors.grey[500] : Colors.black87,
+                          decoration: task.completed 
                               ? TextDecoration.lineThrough 
                               : TextDecoration.none,
                         ),
@@ -228,10 +424,10 @@ class _TasksScreenState extends State<TasksScreen> {
                     ),
                   ],
                 ),
-                if (task['description'].isNotEmpty) ...[
+                if (task.description.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Text(
-                    task['description'],
+                    task.description,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],
@@ -251,7 +447,7 @@ class _TasksScreenState extends State<TasksScreen> {
                         border: Border.all(color: priorityColor.withOpacity(0.3)),
                       ),
                       child: Text(
-                        task['priority'],
+                        task.priority,
                         style: TextStyle(
                           fontSize: 12,
                           color: priorityColor,
@@ -269,7 +465,7 @@ class _TasksScreenState extends State<TasksScreen> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          _formatDueDate(task['dueDate']),
+                          _formatDueDate(task.dueDate),
                           style: TextStyle(
                             fontSize: 12,
                             color: isOverdue ? Colors.red : Colors.grey[600],
@@ -288,20 +484,20 @@ class _TasksScreenState extends State<TasksScreen> {
     );
   }
 
-  // CRUD Operations
+  // CRUD Operations using TaskManager
   void _showAddTaskDialog() {
     _showTaskDialog();
   }
 
-  void _showEditTaskDialog(Map<String, dynamic> task) {
+  void _showEditTaskDialog(Task task) {
     _showTaskDialog(task: task);
   }
 
-  void _showTaskDialog({Map<String, dynamic>? task}) {
-    final titleController = TextEditingController(text: task?['title'] ?? '');
-    final descController = TextEditingController(text: task?['description'] ?? '');
-    String selectedPriority = task?['priority'] ?? 'Medium';
-    DateTime selectedDate = task?['dueDate'] ?? DateTime.now().add(const Duration(days: 1));
+  void _showTaskDialog({Task? task}) {
+    final titleController = TextEditingController(text: task?.title ?? '');
+    final descController = TextEditingController(text: task?.description ?? '');
+    String selectedPriority = task?.priority ?? 'Medium';
+    DateTime selectedDate = task?.dueDate ?? DateTime.now().add(const Duration(days: 1));
     TimeOfDay selectedTime = TimeOfDay.fromDateTime(selectedDate);
 
     showDialog(
@@ -423,7 +619,7 @@ class _TasksScreenState extends State<TasksScreen> {
                     );
                   } else {
                     _updateTask(
-                      task['id'],
+                      task,
                       titleController.text.trim(),
                       descController.text.trim(),
                       selectedPriority,
@@ -442,85 +638,36 @@ class _TasksScreenState extends State<TasksScreen> {
   }
 
   void _addTask(String title, String description, String priority, DateTime dueDate) {
-    setState(() {
-      tasks.add({
-        'id': DateTime.now().millisecondsSinceEpoch.toString(),
-        'title': title,
-        'description': description,
-        'completed': false,
-        'priority': priority,
-        'dueDate': dueDate,
-        'createdAt': DateTime.now(),
-      });
-    });
+    final newTask = Task(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: title,
+      description: description,
+      completed: false,
+      priority: priority,
+      dueDate: dueDate,
+      createdAt: DateTime.now(),
+    );
+    _taskManager.addTask(newTask);
     _showSnackbar('Task added successfully');
   }
 
-  void _updateTask(String id, String title, String description, String priority, DateTime dueDate) {
-    setState(() {
-      int index = tasks.indexWhere((task) => task['id'] == id);
-      if (index != -1) {
-        tasks[index] = {
-          ...tasks[index],
-          'title': title,
-          'description': description,
-          'priority': priority,
-          'dueDate': dueDate,
-        };
-      }
-    });
+  void _updateTask(Task originalTask, String title, String description, String priority, DateTime dueDate) {
+    final updatedTask = Task(
+      id: originalTask.id,
+      title: title,
+      description: description,
+      completed: originalTask.completed,
+      priority: priority,
+      dueDate: dueDate,
+      createdAt: originalTask.createdAt,
+    );
+    _taskManager.updateTask(updatedTask);
     _showSnackbar('Task updated successfully');
   }
 
-  void _deleteTask(String id) {
-    setState(() {
-      tasks.removeWhere((task) => task['id'] == id);
-    });
-    _showSnackbar('Task deleted successfully');
-  }
-
-  void _duplicateTask(Map<String, dynamic> task) {
-    setState(() {
-      tasks.add({
-        'id': DateTime.now().millisecondsSinceEpoch.toString(),
-        'title': '${task['title']} (Copy)',
-        'description': task['description'],
-        'completed': false,
-        'priority': task['priority'],
-        'dueDate': task['dueDate'].add(const Duration(days: 1)),
-        'createdAt': DateTime.now(),
-      });
-    });
-    _showSnackbar('Task duplicated successfully');
-  }
-
-  void _toggleTaskCompletion(String id) {
-    setState(() {
-      int index = tasks.indexWhere((task) => task['id'] == id);
-      if (index != -1) {
-        tasks[index]['completed'] = !tasks[index]['completed'];
-      }
-    });
-  }
-
   // Helper Methods
-  List<Map<String, dynamic>> _getFilteredTasks() {
-    switch (selectedFilter) {
-      case 'Pending':
-        return tasks.where((task) => !task['completed']).toList();
-      case 'Completed':
-        return tasks.where((task) => task['completed']).toList();
-      case 'Overdue':
-        return tasks.where((task) => 
-          DateTime.now().isAfter(task['dueDate']) && !task['completed']
-        ).toList();
-      default:
-        return tasks;
-    }
-  }
-
   int _getFilterCount(String filter) {
-    return _getFilteredTasks().length;
+    return _taskManager.getFilteredTasks(filter).length;
   }
 
   Color _getPriorityColor(String priority) {
@@ -557,7 +704,7 @@ class _TasksScreenState extends State<TasksScreen> {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  void _handleTaskAction(String action, Map<String, dynamic> task) {
+  void _handleTaskAction(String action, Task task) {
     switch (action) {
       case 'edit':
         _showEditTaskDialog(task);
@@ -566,17 +713,18 @@ class _TasksScreenState extends State<TasksScreen> {
         _showDeleteConfirmation(task);
         break;
       case 'duplicate':
-        _duplicateTask(task);
+        _taskManager.duplicateTask(task);
+        _showSnackbar('Task duplicated successfully');
         break;
     }
   }
 
-  void _showDeleteConfirmation(Map<String, dynamic> task) {
+  void _showDeleteConfirmation(Task task) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Task'),
-        content: Text('Are you sure you want to delete "${task['title']}"?'),
+        content: Text('Are you sure you want to delete "${task.title}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -584,8 +732,9 @@ class _TasksScreenState extends State<TasksScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              _deleteTask(task['id']);
+              _taskManager.deleteTask(task.id);
               Navigator.pop(context);
+              _showSnackbar('Task deleted successfully');
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Delete'),
@@ -595,28 +744,28 @@ class _TasksScreenState extends State<TasksScreen> {
     );
   }
 
-  void _showTaskDetails(Map<String, dynamic> task) {
+  void _showTaskDetails(Task task) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(task['title']),
+        title: Text(task.title),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (task['description'].isNotEmpty) ...[
+            if (task.description.isNotEmpty) ...[
               Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(task['description']),
+              Text(task.description),
               const SizedBox(height: 12),
             ],
             Text('Priority:', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(task['priority']),
+            Text(task.priority),
             const SizedBox(height: 12),
             Text('Due Date:', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(_formatDueDate(task['dueDate'])),
+            Text(_formatDueDate(task.dueDate)),
             const SizedBox(height: 12),
             Text('Status:', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(task['completed'] ? 'Completed' : 'Pending'),
+            Text(task.completed ? 'Completed' : 'Pending'),
           ],
         ),
         actions: [
@@ -637,13 +786,6 @@ class _TasksScreenState extends State<TasksScreen> {
   }
 
   void _showTaskStats() {
-    int total = tasks.length;
-    int completed = tasks.where((task) => task['completed']).length;
-    int pending = total - completed;
-    int overdue = tasks.where((task) => 
-      DateTime.now().isAfter(task['dueDate']) && !task['completed']
-    ).length;
-
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -651,10 +793,10 @@ class _TasksScreenState extends State<TasksScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildStatRow('Total Tasks', total),
-            _buildStatRow('Completed', completed),
-            _buildStatRow('Pending', pending),
-            _buildStatRow('Overdue', overdue),
+            _buildStatRow('Total Tasks', _taskManager.totalTasks),
+            _buildStatRow('Completed', _taskManager.completedTasks),
+            _buildStatRow('Pending', _taskManager.pendingTasks),
+            _buildStatRow('Overdue', _taskManager.overdueTasks),
           ],
         ),
         actions: [
