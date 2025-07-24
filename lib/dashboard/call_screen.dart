@@ -10,7 +10,7 @@ class CallScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calls', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF374151),
+        backgroundColor: const Color(0xFF5C5C5C),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Container(
@@ -19,7 +19,7 @@ class CallScreen extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF374151),
+              Color(0xFF5C5C5C),
               Color(0xFF111827),
             ],
           ),

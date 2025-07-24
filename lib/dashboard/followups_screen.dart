@@ -268,7 +268,7 @@ class _FollowUpsScreenState extends State<FollowUpsScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF374151),
+              Color(0xFF5C5C5C),
               Color(0xFF111827),
             ],
           ),

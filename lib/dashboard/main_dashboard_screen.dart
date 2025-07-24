@@ -439,7 +439,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     bool showTasks = recentTasks.isNotEmpty && (recentFollowUps.isEmpty || todayTasks > 0 || overdueTasks > 0);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF2D3748),
+      backgroundColor: const Color(0xFF5C5C5C),
       body: SafeArea(
         child: Column(
           children: [
