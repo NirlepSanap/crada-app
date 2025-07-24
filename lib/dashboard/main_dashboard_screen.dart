@@ -490,7 +490,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Welcome, Alex !',
+                      'Welcome, LazyDeveloper!',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,

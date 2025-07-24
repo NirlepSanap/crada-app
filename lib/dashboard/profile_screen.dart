@@ -50,7 +50,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     const Text(
-                      'Alex Johnson',
+                      'LazyDeveloper',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -59,7 +59,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'alex.johnson@company.com',
+                      'LazyDeveloper@gmail.com',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[600],

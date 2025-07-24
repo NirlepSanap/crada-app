@@ -26,7 +26,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       backgroundColor: const Color(0xFF5C5C5C),
       body: Center(
         child: Text(
-          'Welcome ,Alex !',
+          'Welcome ,LazyDevloper !',
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.bold,
