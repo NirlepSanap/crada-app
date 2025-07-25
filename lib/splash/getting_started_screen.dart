@@ -101,7 +101,7 @@ class _GettingStartedScreenState extends State<GettingStartedScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (_) => OTPVerificationScreen(
-                              phoneNumber: _completePhoneNumber,
+                              phoneNumber: _completePhoneNumber, verificationId: '',
                             ),
                           ),
                         );

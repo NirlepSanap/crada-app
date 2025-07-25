@@ -1,4 +1,3 @@
-import 'package:cradius_app/splash/create_account_screen.dart';
 import 'package:cradius_app/splash/getting_started_screen.dart';
 import 'package:flutter/material.dart';
 
