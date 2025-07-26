@@ -50,7 +50,7 @@ class TaskManager {
   factory TaskManager() => _instance;
   TaskManager._internal();
 
-  List<Task> _tasks = [
+  final List<Task> _tasks = [
     Task(
       id: '1',
       title: 'Follow up with client presentation',
@@ -694,7 +694,7 @@ class _TasksScreenState extends State<TasksScreen> {
     } else if (difference == -1) {
       return 'Yesterday ${TimeOfDay.fromDateTime(date).format(context)}';
     } else if (difference > 1) {
-      return '${difference} days';
+      return '$difference days';
     } else {
       return '${difference.abs()} days ago';
     }

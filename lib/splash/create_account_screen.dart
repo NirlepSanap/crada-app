@@ -30,12 +30,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   bool isPressed = false;
 
   void _handleButtonPress() {
-    setState(() {
-      isPressed = true;
-    });
-
+    setState(() => isPressed = true);
     Future.delayed(const Duration(milliseconds: 150), () {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const GettingStartedScreen()),
       );
@@ -46,109 +43,120 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Curved Header
-          ClipPath(
-            clipper: HeaderClipper(),
-            child: Container(
-              color: const Color(0xFF4C4C4C),
-              padding: const EdgeInsets.only(top: 80, bottom: 120),
-              child: Column(
-                children: [
-                  Image.asset(
-                    'assets/logo_light.png',
-                    width: 300,
-                    height: 200,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Curved Header
+              ClipPath(
+                clipper: HeaderClipper(),
+                child: Container(
+                  color: const Color(0xFF4C4C4C),
+                  padding: const EdgeInsets.only(top: 60, bottom: 100),
+                  child: Center(
+                    child: Image.asset(
+                      'assets/logo_light.png',
+                      width: 220,
+                      height: 160,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
 
-          const SizedBox(height: 100),
+              const SizedBox(height: 80),
 
-          // Create Account Button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0),
-            child: SizedBox(
-              height: 48,
-              child: OutlinedButton(
-                onPressed: _handleButtonPress,
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: isPressed ? const Color(0xFF4C4C4C) : Colors.white,
-                  foregroundColor: isPressed ? Colors.white : Colors.black,
-                  shape: RoundedRectangleBorder(
+              // Create Account Button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: isPressed ? const Color(0xFF4C4C4C) : Colors.white,
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.black),
                   ),
-                  side: const BorderSide(color: Colors.black),
-                ),
-                child: const Text(
-                  'Create Account',
-                  style: TextStyle(fontSize: 16),
+                  child: OutlinedButton(
+                    onPressed: _handleButtonPress,
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: isPressed ? Colors.white : Colors.black,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Create Account',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
 
-          const Spacer(),
+              const SizedBox(height: 120),
 
-          // Footer Text
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-            child: Column(
-              children: [
-                const Text(
-                  'By continuing you agree to our',
-                  style: TextStyle(fontSize: 12, color: Colors.black54),
-                ),
-                const SizedBox(height: 4),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 8,
-                  children: const [
-                    Text(
-                      'Terms of Service',
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black87,
-                          decoration: TextDecoration.underline),
+              // Footer Text
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  children: [
+                    const Text(
+                      'By continuing you agree to our',
+                      style: TextStyle(fontSize: 12, color: Colors.black54),
                     ),
-                    Text(
-                      'Privacy Policy',
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black87,
-                          decoration: TextDecoration.underline),
-                    ),
-                    Text(
-                      'Content Policy',
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black87,
-                          decoration: TextDecoration.underline),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: const [
+                        Text(
+                          'Terms of Service',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black87,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                        Text(
+                          'Privacy Policy',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black87,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                        Text(
+                          'Content Policy',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black87,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          )
-        ],
+              ),
+
+              const SizedBox(height: 24),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-
-// Curved clipper
 class HeaderClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
     path.lineTo(0, size.height - 60);
-    path.lineTo(size.width / 2, size.height);
-    path.lineTo(size.width, size.height - 60);
+    path.quadraticBezierTo(
+        size.width / 2, size.height, size.width, size.height - 60);
     path.lineTo(size.width, 0);
     path.close();
     return path;

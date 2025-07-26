@@ -56,7 +56,7 @@ class TaskManager {
   factory TaskManager() => _instance;
   TaskManager._internal();
 
-  List<Task> _tasks = [
+  final List<Task> _tasks = [
     Task(
       id: '1',
       title: 'Follow up with client presentation',
@@ -217,7 +217,7 @@ class FollowUpManager {
   factory FollowUpManager() => _instance;
   FollowUpManager._internal();
 
-  List<FollowUpItem> _followUps = [
+  final List<FollowUpItem> _followUps = [
     FollowUpItem(
       id: '1',
       name: 'James Smith',
@@ -921,7 +921,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     } else if (difference == -1) {
       return 'Yesterday';
     } else if (difference > 1) {
-      return '${difference} days';
+      return '$difference days';
     } else {
       return '${difference.abs()} days ago';
     }

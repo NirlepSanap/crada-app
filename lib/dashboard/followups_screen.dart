@@ -170,7 +170,7 @@ class _FollowUpsScreenState extends State<FollowUpsScreen> {
                           children: [
                             const Icon(Icons.access_time),
                             const SizedBox(width: 16),
-                            Text('${selectedTime.format(context)}'),
+                            Text(selectedTime.format(context)),
                           ],
                         ),
                       ),

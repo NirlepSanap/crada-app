@@ -79,33 +79,77 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   }
 
   // ✅ Manual OTP verification
-  Future<void> _verifyOTP() async {
-    if (_otpCode.length != 6) return;
+  // Future<void> _verifyOTP() async {
+  //   if (_otpCode.length != 6) return;
 
-    setState(() => _isLoading = true);
+  //   setState(() => _isLoading = true);
 
-    try {
-      final credential = PhoneAuthProvider.credential(
-        verificationId: _verificationId,
-        smsCode: _otpCode.trim(),
-      );
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("OTP Verified!")),
-        );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const PersonalInfoScreen()),
-        );
-      }
-    } catch (e) {
-      setState(() => _isLoading = false);
+  //   try {
+  //     final credential = PhoneAuthProvider.credential(
+  //       verificationId: _verificationId,
+  //       smsCode: _otpCode.trim(),
+  //     );
+  //     await FirebaseAuth.instance.signInWithCredential(credential);
+  //     if (context.mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text("OTP Verified!")),
+  //       );
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => const PersonalInfoScreen()),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     setState(() => _isLoading = false);
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Invalid OTP: ${e.toString()}")),
+  //     );
+  //   }
+  // }
+
+Future<void> _verifyOTP() async {
+  if (_otpCode.length != 6) return;
+
+  setState(() => _isLoading = true);
+
+  // ✅ Check for hardcoded OTP
+  if (_otpCode.trim() == '987456') {
+    await Future.delayed(const Duration(milliseconds: 500)); // optional delay
+    if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Invalid OTP: ${e.toString()}")),
+        const SnackBar(content: Text("OTP Verified (Test Mode)!")),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const PersonalInfoScreen()),
       );
     }
+    return;
   }
+
+  try {
+    final credential = PhoneAuthProvider.credential(
+      verificationId: _verificationId,
+      smsCode: _otpCode.trim(),
+    );
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("OTP Verified!")),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const PersonalInfoScreen()),
+      );
+    }
+  } catch (e) {
+    setState(() => _isLoading = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Invalid OTP: ${e.toString()}")),
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {

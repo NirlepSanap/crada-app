@@ -28,7 +28,7 @@ class CallScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           itemCount: 8,
           itemBuilder: (context, index) {
-            return _buildCallCard('Contact ${index + 1}', '${index % 2 == 0 ? 'Incoming' : 'Outgoing'}', '${index + 1}0 min ago');
+            return _buildCallCard('Contact ${index + 1}', index % 2 == 0 ? 'Incoming' : 'Outgoing', '${index + 1}0 min ago');
           },
         ),
       ),

@@ -1,21 +1,25 @@
-import 'package:cradius_app/dashboard/main_dashboard_screen.dart';
-import 'package:cradius_app/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'create_account_screen.dart';
+import 'business_info_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        } else if (snapshot.hasData) {
+          return BusinessInfoScreen(); // Authenticated
+        } else {
+          return CreateAccountScreen(); // Not logged in
         }
-        if (snapshot.hasData) {
-          return MainDashboardScreen(); // user is signed in
-        }
-        return SplashScreen(); // user is not signed in
       },
     );
   }
