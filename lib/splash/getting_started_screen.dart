@@ -50,7 +50,10 @@ class _GettingStartedScreenState extends State<GettingStartedScreen> {
                   height: 6,
                   child: Stack(
                     children: [
-                      Container(width: double.infinity, color: Colors.grey[300]),
+                      Container(
+                        width: double.infinity,
+                        color: Colors.grey[300],
+                      ),
                       FractionallySizedBox(
                         widthFactor: 0.20,
                         child: Container(color: Colors.black),
@@ -77,7 +80,10 @@ class _GettingStartedScreenState extends State<GettingStartedScreen> {
                   initialCountryCode: 'IN',
                   decoration: InputDecoration(
                     hintText: 'Enter Phone Number',
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -101,25 +107,33 @@ class _GettingStartedScreenState extends State<GettingStartedScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (_) => OTPVerificationScreen(
-                              phoneNumber: _completePhoneNumber, verificationId: '',
+                              phoneNumber: _completePhoneNumber,
+                              verificationId: '',
                             ),
                           ),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Please enter a valid phone number")),
+                          const SnackBar(
+                            content: Text("Please enter a valid phone number"),
+                          ),
                         );
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _isPhoneFocused ? const Color(0xFF4C4C4C) : Colors.black,
+                      backgroundColor: _isPhoneFocused
+                          ? const Color(0xFF4C4C4C)
+                          : Colors.black,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: const Text(
                       'Send OTP',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -150,7 +164,11 @@ class _GettingStartedScreenState extends State<GettingStartedScreen> {
 
                 const Text(
                   "Or Continue with:",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF4C4C4C)),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF4C4C4C),
+                  ),
                 ),
 
                 const SizedBox(height: 16),
