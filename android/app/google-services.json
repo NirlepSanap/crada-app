@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "95560342958",
+    "project_id": "cradd-2b709",
+    "storage_bucket": "cradd-2b709.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95560342958:android:01f61dc9d70f5ed5b7fc3f",
+        "android_client_info": {
+          "package_name": "com.example.cradius_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBv-gExGvVoRLqc-3ZY5LL4gba9bGKcJyU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
