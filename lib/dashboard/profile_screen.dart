@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'settings_screen.dart'; // Import the settings screen
 
 class ProfileScreen extends StatelessWidget {
   final Map<String, dynamic>? userData;
@@ -54,13 +55,37 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Text(
-                      _getUserDisplayName(),
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _getUserDisplayName(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () => _showEditNameDialog(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.blue[100],
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Icon(
+                              Icons.edit,
+                              size: 16,
+                              color: Colors.blue[600],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -88,7 +113,6 @@ class ProfileScreen extends StatelessWidget {
               // Profile Options
               _buildProfileOption(context, Icons.edit, 'Edit Profile'),
               _buildProfileOption(context, Icons.settings, 'Settings'),
-              _buildProfileOption(context, Icons.notifications, 'Notifications'),
               _buildProfileOption(context, Icons.privacy_tip, 'Privacy'),
               _buildProfileOption(context, Icons.help, 'Help & Support'),
               _buildProfileOption(context, Icons.logout, 'Logout', isLast: true),
@@ -132,6 +156,68 @@ class ProfileScreen extends StatelessWidget {
     return ''; // Return empty string if no phone number
   }
 
+  void _showEditNameDialog(BuildContext context) {
+    TextEditingController firstNameController = TextEditingController();
+    TextEditingController lastNameController = TextEditingController();
+    
+    // Pre-fill with current values if available
+    if (userData != null) {
+      firstNameController.text = userData!['firstName'] ?? '';
+      lastNameController.text = userData!['lastName'] ?? '';
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Edit Name'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: firstNameController,
+                decoration: const InputDecoration(
+                  labelText: 'First Name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: lastNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Last Name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Here you would typically update the userData
+                // For now, just show a success message
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Name updated successfully!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              child: const Text('Update'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _handleLogout(BuildContext context) {
     showDialog(
       context: context,
@@ -168,6 +254,13 @@ class ProfileScreen extends StatelessWidget {
       onTap: () {
         if (title == 'Logout') {
           _handleLogout(context);
+        } else if (title == 'Settings') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const SettingsScreen(),
+            ),
+          );
         } else {
           // Handle other profile options
           ScaffoldMessenger.of(context).showSnackBar(

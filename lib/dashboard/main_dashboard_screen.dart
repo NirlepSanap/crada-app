@@ -378,7 +378,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     await Navigator.push(
       context, 
       MaterialPageRoute(builder: (context) => ProfileScreen(userData: widget.userData))
-    );
+    ); 
   }
 
   void _onMenuTapped() {
