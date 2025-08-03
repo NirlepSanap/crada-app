@@ -382,7 +382,164 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
   }
 
   void _onMenuTapped() {
-    _showSnackBar('Menu Opened');
+    _showSideDrawer();
+  }
+
+  void _showSideDrawer() {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: '',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(-1.0, 0.0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeInOut,
+          )),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Material(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                height: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1F2937),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    // Header section
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(20, 60, 20, 30),
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[600],
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: const Icon(
+                              Icons.person,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            _getUserDisplayName(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    // Menu items
+                    Expanded(
+                      child: Column(
+                        children: [
+                          _buildSideMenuItem(
+                            icon: Icons.account_circle,
+                            title: 'Account Settings',
+                            onTap: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileScreen(userData: widget.userData),
+                                ),
+                              );
+                            },
+                          ),
+                          _buildSideMenuItem(
+                            icon: Icons.help_outline,
+                            title: 'Help & Support',
+                            onTap: () {
+                              Navigator.pop(context);
+                              // Do nothing as requested
+                            },
+                          ),
+                          const Spacer(),
+                          _buildSideMenuItem(
+                            icon: Icons.logout,
+                            title: 'Log Out',
+                            onTap: () {
+                              Navigator.pop(context);
+                              _handleLogout();
+                            },
+                            isLogout: true,
+                          ),
+                          const SizedBox(height: 40),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _handleLogout() {
+    // Clear any stored user data or tokens here if needed
+    
+    // Navigate to create account screen and clear navigation stack
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      '/create-account', // Replace with your actual route name
+      (route) => false,
+    );
+  }
+
+  Widget _buildSideMenuItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    bool isLogout = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: isLogout ? Colors.red[400] : Colors.white70,
+              size: 20,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: isLogout ? Colors.red[400] : Colors.white70,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _onLeadTapped(String leadName) {
@@ -493,7 +650,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Icon(
-                        Icons.location_on,
+                        Icons.person,
                         color: Colors.white,
                         size: 20,
                       ),
