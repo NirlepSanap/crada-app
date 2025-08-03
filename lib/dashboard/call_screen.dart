@@ -4,7 +4,6 @@ import 'package:url_launcher/url_launcher.dart';
 class CallScreen extends StatelessWidget {
   const CallScreen({super.key});
 
-  // Sample call data with phone numbers
   final List<Map<String, dynamic>> callHistory = const [
     {
       'name': 'James Smith',
@@ -12,13 +11,6 @@ class CallScreen extends StatelessWidget {
       'type': 'Incoming',
       'time': '10 min ago',
       'duration': '5:23'
-    },
-    {
-      'name': 'Olivia Taylor',
-      'phone': '+1987654321',
-      'type': 'Outgoing',
-      'time': '20 min ago',
-      'duration': '2:45'
     },
     {
       'name': 'Jaden Smith',
