@@ -162,7 +162,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     );
   }
 
-  // Method for read-only fields (like phone number)
+  // New method for read-only fields (like phone number)
   Widget _buildReadOnlyField(String label, String value) {
     return TextField(
       enabled: false,
@@ -178,13 +178,5 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       ),
       controller: TextEditingController(text: value),
     );
-  }
-
-  @override
-  void dispose() {
-    firstNameController.dispose();
-    lastNameController.dispose();
-    emailController.dispose();
-    super.dispose();
   }
 }

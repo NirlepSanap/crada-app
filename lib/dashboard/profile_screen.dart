@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
   final Map<String, dynamic>? userData;
-
-  const ProfileScreen({super.key, this.userData});
+  
+  const ProfileScreen({
+    super.key,
+    this.userData,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +21,10 @@ class ProfileScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF5C5C5C), Color(0xFF111827)],
+            colors: [
+              Color(0xFF5C5C5C),
+              Color(0xFF111827),
+            ],
           ),
         ),
         child: SingleChildScrollView(
@@ -59,13 +65,19 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       _getUserEmail(),
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
                     ),
                     if (_getUserPhoneNumber().isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
                         _getUserPhoneNumber(),
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
                       ),
                     ],
                   ],
@@ -76,19 +88,10 @@ class ProfileScreen extends StatelessWidget {
               // Profile Options
               _buildProfileOption(context, Icons.edit, 'Edit Profile'),
               _buildProfileOption(context, Icons.settings, 'Settings'),
-              _buildProfileOption(
-                context,
-                Icons.notifications,
-                'Notifications',
-              ),
+              _buildProfileOption(context, Icons.notifications, 'Notifications'),
               _buildProfileOption(context, Icons.privacy_tip, 'Privacy'),
               _buildProfileOption(context, Icons.help, 'Help & Support'),
-              _buildProfileOption(
-                context,
-                Icons.logout,
-                'Logout',
-                isLast: true,
-              ),
+              _buildProfileOption(context, Icons.logout, 'Logout', isLast: true),
             ],
           ),
         ),
@@ -101,7 +104,7 @@ class ProfileScreen extends StatelessWidget {
     if (userData != null) {
       String firstName = userData!['firstName'] ?? '';
       String lastName = userData!['lastName'] ?? '';
-
+      
       if (firstName.isNotEmpty && lastName.isNotEmpty) {
         return '$firstName $lastName';
       } else if (firstName.isNotEmpty) {
@@ -115,9 +118,7 @@ class ProfileScreen extends StatelessWidget {
 
   // Method to get user's email
   String _getUserEmail() {
-    if (userData != null &&
-        userData!['email'] != null &&
-        userData!['email'].toString().isNotEmpty) {
+    if (userData != null && userData!['email'] != null && userData!['email'].toString().isNotEmpty) {
       return userData!['email'];
     }
     return 'LazyDeveloper@gmail.com'; // Fallback to original email
@@ -125,9 +126,7 @@ class ProfileScreen extends StatelessWidget {
 
   // Method to get user's phone number
   String _getUserPhoneNumber() {
-    if (userData != null &&
-        userData!['phoneNumber'] != null &&
-        userData!['phoneNumber'].toString().isNotEmpty) {
+    if (userData != null && userData!['phoneNumber'] != null && userData!['phoneNumber'].toString().isNotEmpty) {
       return userData!['phoneNumber'];
     }
     return ''; // Return empty string if no phone number
@@ -164,12 +163,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileOption(
-    BuildContext context,
-    IconData icon,
-    String title, {
-    bool isLast = false,
-  }) {
+  Widget _buildProfileOption(BuildContext context, IconData icon, String title, {bool isLast = false}) {
     return GestureDetector(
       onTap: () {
         if (title == 'Logout') {
@@ -218,7 +212,11 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Icon(Icons.chevron_right, color: Colors.grey[600], size: 20),
+            Icon(
+              Icons.chevron_right,
+              color: Colors.grey[600],
+              size: 20,
+            ),
           ],
         ),
       ),
